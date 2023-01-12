@@ -1,0 +1,31 @@
+#!/bin/bash
+if [ "$#" -ne 1 ]; then
+  printf "Need to include file as argument e.g. bpp hello.sh\n" >&2;
+  exit 1;
+fi
+
+if [[ -z "${BPP_CLS_PATH}" ]]; then
+	BPP_CLS_PATH=$(pwd);
+fi
+
+include() {
+	first_char=${1:0:1};
+    if [ "${first_char}" = "[" ]; then 
+      bpp_class=$(echo ${1} | cut -d "[" -f2 | cut -d "]" -f1);
+      . ${BPP_CLS_PATH}/classes/${bpp_class}-class.sh;
+    else
+      . ${1};
+    fi
+}
+
+OUTPUT_FILE=$(mktemp)
+. ${1} > $OUTPUT_FILE 2>&1;
+OUTPUT="$(< "$OUTPUT_FILE")"
+rm -f "$OUTPUT_FILE"
+# TODO: check if OUTPUT is not empty and produce error
+
+if [ -n "$(LC_ALL=C type -t main)" ] && [ "$(LC_ALL=C type -t main)" = function ]; then
+  main
+else
+  printf "main function does not exist" >&2;
+fi
