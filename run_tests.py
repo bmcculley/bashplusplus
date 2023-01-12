@@ -8,7 +8,7 @@ test_env = os.environ.copy()
 
 
 def runBPP(command):
-    command = "/bin/bash bpp %s" % command
+    command = "/bin/bash bin/bpp %s" % command
     process = subprocess.Popen(command,
                                env=test_env,
                                shell=True,
